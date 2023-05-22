@@ -19,6 +19,23 @@ class Books(Resource):
         books = [book.to_dict() for book in Book.query.all()]
         return make_response(jsonify(books), 200)
     
+    def post(self):
+        data = request.get_json()
+
+        new_book = Book(
+            title=data['title'],
+            author=data['author'],
+            page_count=data['page_count'],
+            summary=data['summary'],
+            category=data['category']
+        )
+
+        db.session.add(new_book)
+        db.session.commit()
+        
+        return make_response(new_book.to_dict(), 201)
+
+    
 api.add_resource(Books, '/books')
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
