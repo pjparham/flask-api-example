@@ -37,5 +37,27 @@ class Books(Resource):
 
     
 api.add_resource(Books, '/books')
+
+class BookByID(Resource):
+
+    def get(self, id):
+        book = Book.query.filter_by(id=id).first().to_dict()
+        return make_response(jsonify(book), 200)
+    
+    def patch(self, id):
+        data = request.get_json()
+        book = Book.query.filter_by(id=id).first()
+        for attr in data:
+            setattr(book, attr, data[attr])
+
+        db.session.add(book)
+        db.session.commit()
+
+        response_dict = book.to_dict()
+        return make_response(response_dict, 200)
+    
+api.add_resource(BookByID, '/books/<int:id>')
+
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
