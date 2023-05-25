@@ -56,6 +56,22 @@ class BookByID(Resource):
         response_dict = book.to_dict()
         return make_response(response_dict, 200)
     
+    def delete(self, id) :
+        book = Book.query.filter_by(id=id).first()
+        db.session.delete(book)
+        db.session.commit()
+        response_body = {
+            "delete_successful": True,
+            "message": "Book deleted."
+        }
+
+        response = make_response(
+            response_body,
+            200
+        )
+
+        return response
+    
 api.add_resource(BookByID, '/books/<int:id>')
 
 
